@@ -1,7 +1,7 @@
 {
-  "name": "Ballot Match — Nonpartisan voter guide",
+  "name": "Ballot Match — Denton County Voter Guide",
   "short_name": "Ballot Match",
-  "description": "Find the candidates on your ballot who share your values. Nonpartisan.",
+  "description": "Nonpartisan Denton County, Texas voter guide. Find the candidates on your ballot who share your values.",
   "start_url": "./#/start",
   "scope": "./",
   "display": "standalone",

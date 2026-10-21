@@ -1,4 +1,6 @@
-# Ballot Match
+# Ballot Match — Denton County Voter Guide
+
+This edition covers the Nov. 3, 2026 general election in Denton County, Texas. Voters choose their districts (with a one-tap Flower Mound preset) instead of entering a ZIP code.
 
 A nonpartisan voter guide you install on a phone or tablet. Voters enter their ZIP code, pick the races on their ballot, answer 12 or 24 statements on the most divisive issues, and see which candidate in each race matches them best, and why.
 
@@ -79,6 +81,7 @@ Every file sits in one folder, with no subfolders, so it uploads to GitHub in on
 | `questions.json` | The 12 topics and 24 statements |
 | `stances.json` | Candidate stance records |
 | `demo-ballot.json` | The fictional demo ballot |
+| `denton.json` | **The Denton County ballot**: countywide races, district races (U.S. House, Texas House, commissioner, JP), extra races and propositions, researched Oct 21, 2026 |
 | `sw.js` | Service worker: works offline, installable |
 | `manifest.webmanifest`, `*.png`, `favicon.svg` | Home-screen name, colors and icons |
 

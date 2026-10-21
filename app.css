@@ -53,7 +53,7 @@ h1, h2, h3 { margin: 0; }
 .brand:hover { color: #fff; }
 .brand-mark { width: 40px; height: 40px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; }
 .brand-name { display: block; white-space: nowrap; font-family: var(--serif); font-weight: 700; font-size: 20px; line-height: 1.1; }
-.brand-sub { display: none; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #C9D3E3; }
+.brand-sub { display: none; white-space: nowrap; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #C9D3E3; }
 .topbar-actions { display: flex; gap: 8px; align-items: center; }
 .chip-btn { display: inline-flex; align-items: center; min-height: 40px; padding: 0 11px; border: 1px solid #5C7399; border-radius: 999px; background: transparent; color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; white-space: nowrap; }
 .progress { background: var(--paper); border-bottom: 1px solid var(--line); }
@@ -112,6 +112,18 @@ main { padding-top: 24px; padding-bottom: calc(var(--bar-h) + var(--safe-b) + 32
 .err { color: var(--red); font-weight: 600; margin: 0; }
 .how li { display: flex; gap: 14px; align-items: flex-start; }
 .how { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+
+/* ---------- Denton County start ---------- */
+.county-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 8px; border-radius: 999px; background: var(--navy); color: #fff; font-weight: 800; font-size: 14px; letter-spacing: .04em; }
+.county-badge .ic { background: #fff; border-radius: 50%; padding: 2px; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+.pill { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-size: 14px; font-weight: 600; }
+.preset-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.dist-grid { display: grid; gap: 14px; }
+.select { appearance: none; -webkit-appearance: none; padding-right: 44px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%230B1F3A' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; cursor: pointer; }
+#distform { max-width: 640px; }
+@media (min-width: 430px) { .brand-sub { display: block; } }
+@media (min-width: 600px) { .dist-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* ---------- Loading ---------- */
 .loadlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
@@ -238,6 +250,12 @@ tr:nth-child(even) td { background: #FBFAF6; }
 .formula { font-family: var(--serif); font-size: 20px; padding: 14px 16px; background: var(--navy-2); color: #fff; border-radius: 8px; }
 .dark-card { background: var(--navy); color: #fff; border: 0; }
 .dark-card p { color: #E3E8F0; }
+
+/* ---------- Also on your ballot ---------- */
+.extras summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; }
+.extra-list { list-style: none; margin: 8px 0 0; padding: 0; }
+.extra-list li { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-top: 1px solid var(--line-2); font-size: 15px; }
+.extra-list li span { color: var(--muted); }
 
 /* ---------- Footer ---------- */
 .foot { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 8px; }

@@ -10,7 +10,8 @@ const OPTS = [[-2, 'Strongly disagree'], [-1, 'Disagree'], [0, 'Neutral'], [1, '
 const IMPS = [[1, 'Low'], [2, 'Medium'], [3, 'High']];
 const WIDE = window.matchMedia('(min-width: 960px)');
 
-let TOPICS = [], QUESTIONS = [], STANCES = {}, DEMO = null;
+let TOPICS = [], QUESTIONS = [], STANCES = {}, DEMO = null, BALLOTS = null, DENTON = null;
+const DIST_KEYS = ['cd', 'hd', 'pct', 'jp'];
 
 /* ---------- storage (answers never leave this device) ---------- */
 const store = {
@@ -27,10 +28,11 @@ const S = {
   mode: store.get('mode', 'full'),
   ans: store.get('ans', {}),
   imp: store.get('imp', {}),
+  dist: store.get('dist', { cd: '', hd: '', pct: '', jp: '' }),
   error: '',
   load: null, // { steps: [], step: 0 }
 };
-function save() { ['zip', 'address', 'ballot', 'sel', 'all', 'mode', 'ans', 'imp'].forEach(k => store.set(k, S[k])); }
+function save() { ['zip', 'address', 'ballot', 'sel', 'all', 'mode', 'ans', 'imp', 'dist'].forEach(k => store.set(k, S[k])); }
 
 /* ---------- helpers ---------- */
 const $ = (s, el = document) => el.querySelector(s);
@@ -119,6 +121,12 @@ async function fetchLive() {
   let res, data;
   try { res = await fetch(url); data = await res.json(); } catch (e) { throw new Error('We couldn’t reach the ballot service. Check your connection and try again.'); }
   if (!res.ok || data.error) { const raw = (data.error && data.error.message) || ('HTTP ' + res.status); const err = new Error(friendly(raw)); err.detail = raw; throw err; }
+  const eab = data.state && data.state[0] && data.state[0].electionAdministrationBody || {};
+  const links = [
+    eab.votingLocationFinderUrl && { label: 'Find your polling place', url: eab.votingLocationFinderUrl },
+    eab.electionRegistrationConfirmationUrl && eab.electionRegistrationConfirmationUrl !== eab.votingLocationFinderUrl && { label: 'Check your registration', url: eab.electionRegistrationConfirmationUrl },
+    eab.ballotInfoUrl && { label: 'Official ballot information', url: eab.ballotInfoUrl },
+  ].filter(Boolean);
   const order = { Federal: 0, State: 1, Local: 2 };
   const cts = (data.contests || [])
     .filter(c => c.type !== 'Referendum' && Array.isArray(c.candidates) && c.candidates.length)
@@ -136,11 +144,38 @@ async function fetchLive() {
     }))
     .sort((a, b) => order[a.level] - order[b.level]);
   if (!cts.length) {
-    throw new Error(S.address.trim()
+    const err = new Error(S.address.trim()
       ? 'No candidate races were found for this address yet. Election officials usually publish ballots a few weeks before Election Day.'
       : 'ZIP codes can cross district lines, so we need your street address to find your exact ballot.');
+    err.empty = true; err.links = links; err.election = data.election;
+    throw err;
   }
-  return { source: 'live', election: data.election || { name: 'Upcoming election' }, contests: cts };
+  return { source: 'live', election: data.election || { name: 'Upcoming election' }, contests: cts, links };
+}
+
+/* Researched ballot (used when Google has no races for an address) */
+function researchedFor(zip, fromErr) {
+  if (!BALLOTS || !BALLOTS.zips || !BALLOTS.zips[zip]) return null;
+  const b = JSON.parse(JSON.stringify(BALLOTS.ballots[BALLOTS.zips[zip]]));
+  b.source = 'researched';
+  if (fromErr && fromErr.election && fromErr.election.name) b.election = fromErr.election;
+  if (fromErr && !fromErr.empty) b.notice = 'We couldn\u2019t reach Google\u2019s ballot service, so this is the ballot we researched for your area. ' + (b.notice || '');
+  return b;
+}
+
+/* ---------- Denton County ballot from chosen districts ---------- */
+function buildBallot() {
+  const d = DENTON, order = { Federal: 0, State: 1, Local: 2 };
+  const picked = [];
+  ['cd', 'hd', 'pct'].forEach(k => { const o = d.districts[k].options[S.dist[k]]; if (o) picked.push(o); });
+  const cts = JSON.parse(JSON.stringify([...d.statewide, ...picked])).sort((a, b) => order[a.level] - order[b.level]);
+  const extras = JSON.parse(JSON.stringify(d.extras));
+  const jp = d.districts.jp.info[S.dist.jp];
+  if (jp) extras.unshift({ office: 'Justice of the Peace \u2014 Precinct ' + S.dist.jp, candidates: jp });
+  const skipped = DIST_KEYS.filter(k => !S.dist[k]).map(k => d.districts[k].label);
+  let notice = d.notice;
+  if (skipped.length) notice += ' Not included because you weren\u2019t sure of your district: ' + joinAnd(skipped.map(lower)) + '. Look them up at votedenton.gov.';
+  return { source: 'denton', election: d.election, contests: cts, extras, props: d.props, links: d.links, notice };
 }
 
 /* ---------- lookup flow ---------- */
@@ -155,7 +190,11 @@ function lookup(useDemo) {
   const tick = setInterval(() => {
     if (S.load && S.load.step < S.load.steps.length - 1) { S.load.step++; if (route().name === 'loading') render(); }
   }, 550);
-  const work = (useDemo || !LIVE) ? Promise.resolve(JSON.parse(JSON.stringify(DEMO))) : fetchLive();
+  const rb = !useDemo && !LIVE ? researchedFor(S.zip) : null;
+  const work = useDemo ? Promise.resolve(JSON.parse(JSON.stringify(DEMO)))
+    : rb ? Promise.resolve(rb)
+    : !LIVE ? Promise.resolve(JSON.parse(JSON.stringify(DEMO)))
+    : fetchLive().catch(err => { const b = researchedFor(S.zip, err); if (b) return b; throw err; });
   work.then(b => {
     const wait = Math.max(0, steps.length * 550 - (Date.now() - t0));
     setTimeout(() => {
@@ -182,7 +221,7 @@ function go(hash) { if (location.hash === hash) render(true); else location.hash
 const footer = () => `
   <footer class="foot">
     <span style="flex-wrap:nowrap;align-items:flex-start">${icon('shield', 20)}<span>Ballot Match does not endorse candidates or parties. Your answers stay on this device.</span></span>
-    <span>Confirm your registration and polling place with your county election office.${S.ballot ? ' <button type="button" class="linkbtn" data-act="restart" data-k="restart">Start over</button>' : ''}</span>
+    <span>Confirm your sample ballot and polling place at <a href="https://www.votedenton.gov/" target="_blank" rel="noopener noreferrer">votedenton.gov</a>.${S.ballot ? ' <button type="button" class="linkbtn" data-act="restart" data-k="restart">Start over</button>' : ''}</span>
   </footer>`;
 
 function photo(c, cls = '') {
@@ -190,38 +229,51 @@ function photo(c, cls = '') {
 }
 
 function viewStart() {
+  const d = DENTON;
+  const sel = (k) => {
+    const def = d.districts[k];
+    const ids = [...Object.keys(def.options), ...Object.keys(def.info || {}), ...(def.none || [])]
+      .filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => (+a) - (+b));
+    const word = k === 'cd' || k === 'hd' ? 'District' : 'Precinct';
+    return `<div>
+      <label class="field-label" for="d-${k}">${esc(def.label)}</label>
+      <select class="field sm select" id="d-${k}" data-dist="${k}">
+        <option value="">Not sure — skip this race</option>
+        ${ids.map(id => `<option value="${id}" ${S.dist[k] === id ? 'selected' : ''}>${word} ${id}${(def.none || []).includes(id) ? ' (no race this year)' : ''}</option>`).join('')}
+      </select>
+    </div>`;
+  };
   return `
   <div class="start-grid">
     <section class="hero">
-      <div class="row kicker">${icon('calendar', 28)}<span>General Election · November 3, 2026</span></div>
-      <h1>Find the candidates who share your values.</h1>
-      <p class="lede">Enter the ZIP code where you’re registered to vote. We’ll pull the open races on your ballot — federal, state and local — and match you on 12 issues. Party labels stay hidden until your results.</p>
-      ${S.error ? `<div class="notice warn" role="alert" style="margin-bottom:18px;flex-direction:column;gap:6px"><span>${esc(S.error)}</span>${S.errorDetail ? `<span style="font-size:13px;color:var(--muted)">Details from Google: ${esc(S.errorDetail)}</span>` : ''}</div>` : ''}
-      <form class="form" id="zipform" novalidate>
+      <div class="county-badge">${icon('map', 26)}<span>Denton County, Texas</span></div>
+      <div class="row kicker" style="margin-top:14px">${icon('calendar', 28)}<span>General Election · Tuesday, Nov. 3, 2026</span></div>
+      <h1>Find the Denton County candidates who share your values.</h1>
+      <p class="lede">Choose your districts, answer questions on 12 issues, and see your closest match in every race on your Denton County ballot. Party labels stay hidden until your results.</p>
+      <div class="pill-row"><span class="pill">${esc(d.election.earlyVoting)}</span><span class="pill">12 or 24 questions</span><span class="pill">No sign-up</span></div>
+      <form class="form card" id="distform" novalidate>
         <div>
-          <label class="field-label" for="zip">ZIP code where you’re registered</label>
-          <input class="field" id="zip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="e.g. 75028" value="${esc(S.zip)}" style="letter-spacing:.12em">
-          <p class="err" id="ziperr" hidden>Enter a 5-digit ZIP code.</p>
+          <h2 class="serif" style="font-size:22px">Your districts</h2>
+          <p class="muted" style="margin:4px 0 0;font-size:15px">Statewide and countywide races are the same for everyone. These four depend on where you live.</p>
         </div>
-        <div>
-          <label class="field-label" for="addr">Street address <span class="field-hint">${LIVE ? '(recommended — ZIP codes can cross district lines)' : '(optional)'}</span></label>
-          <input class="field sm" id="addr" name="addr" type="text" autocomplete="address-line1" placeholder="123 Main St" value="${esc(S.address)}">
+        <div class="preset-row">
+          ${d.presets.map((p, i) => `<button type="button" class="btn ghost sm" data-act="preset" data-i="${i}" data-k="preset-${i}">${icon('pin', 22)}${esc(p.label)}</button>`).join('')}
+          <a class="linkbtn" href="${esc(d.links[0].url)}" target="_blank" rel="noopener noreferrer">Look up my districts ${UI.ext}</a>
         </div>
-        <button type="submit" class="btn red block" data-k="find">Find my ballot</button>
-        ${LIVE ? '<button type="button" class="linkbtn" data-act="demo" data-k="demo" style="align-self:flex-start">Or try the demo ballot</button>'
-               : '<div class="notice">Demo mode: this version uses a sample ballot with fictional candidates.</div>'}
+        <div class="dist-grid">${DIST_KEYS.map(sel).join('')}</div>
+        <button type="submit" class="btn red block" data-k="build">Build my ballot ${UI.next}</button>
       </form>
       <div id="ios-tip"></div>
     </section>
     <aside class="card top-navy">
       <h2 class="serif" style="font-size:22px;margin-bottom:16px">How matching works</h2>
       <ol class="how">
-        <li>${icon('capitol', 40)}<span><strong>Pick your races.</strong> One race or every open election on your ballot.</span></li>
+        <li>${icon('capitol', 40)}<span><strong>Pick your races.</strong> One race or every contested race on your Denton County ballot.</span></li>
         <li>${icon('bubbles', 40)}<span><strong>Answer 12 or 24 statements</strong> on the most divisive issues, and say how much each matters.</span></li>
         <li>${icon('award', 40)}<span><strong>See your closest match</strong> in each race, why, and how every other candidate compares.</span></li>
       </ol>
       <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)" class="stack">
-        <span class="muted" style="font-size:14px">Every stance links to its source. No party is used to guess a position.</span>
+        <span class="muted" style="font-size:14px">Races come from Denton County’s official contest list. Every stance links to its source, and no party is used to guess a position.</span>
         <a class="btn ghost block" href="#/about" data-k="about">${icon('doc', 24)}Behind the app: sources &amp; methodology</a>
       </div>
     </aside>
@@ -241,6 +293,20 @@ function viewLoading() {
   </section>`;
 }
 
+function linksHtml(links) {
+  if (!links || !links.length) return '';
+  return `<div class="links">${links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)} ${UI.ext}</a>`).join('')}</div>`;
+}
+function extrasHtml(b) {
+  if (!b || (!(b.extras || []).length && !(b.props || []).length)) return '';
+  return `<details class="card extras">
+    <summary><strong>Also on your ballot</strong> <span class="muted">\u2014 judges, other statewide offices and propositions</span></summary>
+    <p class="muted" style="font-size:14px;margin:12px 0 4px">These races aren\u2019t matched to your answers. Judges don\u2019t campaign on policy positions, and we haven\u2019t researched the other offices yet.</p>
+    <ul class="extra-list">${(b.extras || []).map(x => `<li><strong>${esc(x.office)}</strong><span>${esc(x.candidates)}</span></li>`).join('')}</ul>
+    ${(b.props || []).map(pr => `<div class="notice" style="margin-top:12px;flex-direction:column;gap:4px"><strong>${esc(pr.title)}</strong><span>${esc(pr.text)}</span></div>`).join('')}
+  </details>`;
+}
+
 function viewRaces() {
   const cts = contests();
   const el = S.ballot.election || {};
@@ -248,10 +314,12 @@ function viewRaces() {
   return `
   <div class="stack" style="gap:22px">
     <div>
-      <div class="kicker">${S.ballot.source === 'demo' ? 'Demo ballot' : 'Your ballot'}${S.zip ? ' · ZIP ' + esc(S.zip) : ''} · ${cts.length} races</div>
+      <div class="kicker">Your Denton County ballot · ${cts.length} matched races</div>
       <h1 class="page-h1" tabindex="-1">Which elections do you want matches for?</h1>
       ${el.name ? `<p class="muted" style="margin:8px 0 0">${esc(el.name)}${el.electionDay ? ' — ' + esc(fmtDate(el.electionDay)) : ''}</p>` : ''}
     </div>
+    ${S.ballot.notice ? `<div class="notice">${icon('clipboard', 28)}<span>${esc(S.ballot.notice)}</span></div>` : ''}
+    ${linksHtml(S.ballot.links)}
     <div class="card switch-row">
       <button type="button" class="switch" role="switch" aria-checked="${S.all}" data-act="all" data-k="all"><span class="track"><span class="knob"></span></span>All open elections</button>
       <span class="muted" style="font-size:14px">${S.sel.length} of ${cts.length}</span>
@@ -273,6 +341,7 @@ function viewRaces() {
       </div>
       <span class="muted" style="font-size:14px">Thorough gives more precise matches, especially in close races.</span>
     </div>
+    ${extrasHtml(S.ballot)}
   </div>${footer()}`;
 }
 
@@ -306,6 +375,8 @@ function viewQuiz(n) {
 
 function raceCard(ct, activeKey) {
   const { scored, top } = scoreContest(ct);
+  const ratedCount = scored.filter(x => x.e.pct !== null).length;
+  const anyRecord = scored.some(x => x.e.rec);
   let topHtml;
   if (top) {
     const { why, hl } = explain(top, scored);
@@ -315,19 +386,20 @@ function raceCard(ct, activeKey) {
       <div class="top-id">
         ${photo(c)}
         <div style="flex:1;min-width:0">
-          <span class="badge">${icon('award', 22)}Your closest match</span>
+          <span class="badge">${icon('award', 22)}${ratedCount > 1 ? 'Your closest match' : 'Only candidate we could score'}</span>
           <h3 class="cand-name">${esc(c.name)}</h3>
           <div class="cand-sub"><strong>${esc(c.party)}</strong>${c.role ? ' · ' + esc(c.role) : ''}</div>
           <div class="pct" style="margin-top:8px"><b>${top.e.pct}%</b><span>aligned with you</span></div>
         </div>
       </div>
       ${c.bio ? `<p style="margin:0">${esc(c.bio)}</p>` : ''}
+      ${ratedCount > 1 ? '' : '<div class="notice warn">The other candidates in this race haven’t taken public positions on the issues you answered, so this score isn’t a head-to-head comparison.</div>'}
       <div class="why"><h3>Why this candidate</h3><p>${esc(why)}</p>${hl.length ? `<ul>${hl.map(h => `<li><strong>${esc(h.topic)}:</strong> ${esc(h.text)}</li>`).join('')}</ul>` : ''}</div>
       <span class="muted" style="font-size:13px">Compared on ${top.e.n} of your answers where ${esc(c.name.split(' ')[0])} has a public position.${top.e.rec && top.e.rec.demo ? ' Demo record.' : ''}</span>
       <a class="btn" href="#/c/${ct.i}/${top.j}" data-k="tp-${ct.i}">Full profile &amp; stances ${UI.next}</a>
     </div>`;
   } else {
-    topHtml = `<div class="top"><div class="notice">${icon('clipboard', 28)}<span>We haven’t analyzed these candidates’ stances yet, so we can’t score a match. Open a profile to read their own materials.</span></div></div>`;
+    topHtml = `<div class="top"><div class="notice">${icon('clipboard', 28)}<span>${anyRecord ? 'None of your answers overlap with the issues these candidates have public positions on. Try the Thorough question set, or open a profile to read their positions.' : 'We haven’t found these candidates’ stances yet, so we can’t score a match. Open a profile to read their own materials.'}</span></div></div>`;
   }
   const rest = scored.filter(x => x !== top);
   return `
@@ -376,6 +448,7 @@ function profileHtml(ct, j, inPane) {
       ${c.bio ? `<p style="margin:0;font-size:17px">${esc(c.bio)}</p>` : ''}
       ${links.length ? `<div class="links">${links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(l)} ${UI.ext}</a>`).join('')}</div>` : ''}
       ${r && r.demo ? '<div class="notice">This is a fictional demo candidate.</div>' : ''}
+      ${r && r.researched ? `<div class="notice">Positions summarized from the public sources below as of ${esc(fmtDate(r.researched))}. \u201cNo record\u201d means we didn\u2019t find a public stance. We never guess from party.</div>` : ''}
     </section>
     <section class="card">
       <h2 class="h-ic">${icon('scales', 34)}Where they stand</h2>
@@ -412,7 +485,7 @@ function viewResults(sel) {
     <div class="res-head">
       ${icon('ballot', 64)}
       <div>
-        <div class="kicker">Your matches${S.zip ? ' · ZIP ' + esc(S.zip) : ''}</div>
+        <div class="kicker">Your matches · Denton County</div>
         <h1 class="page-h1" tabindex="-1">Your closest match in every race</h1>
         <p class="muted" style="margin:6px 0 0">Based on ${answered} answers, weighted by how much each issue matters to you.</p>
       </div>
@@ -421,19 +494,21 @@ function viewResults(sel) {
       <div class="stack">${list.map(ct => raceCard(ct, activeKey)).join('') || '<div class="card">No races selected.</div>'}</div>
       ${wide ? `<aside class="detail-pane" aria-label="Candidate profile">${paneCt ? profileHtml(paneCt, paneJ, true) : '<div class="card pane-empty">Select a candidate to see their profile.</div>'}</aside>` : ''}
     </div>
+    ${extrasHtml(S.ballot)}
+    ${S.ballot.links && S.ballot.links.length ? `<div class="stack" style="gap:10px"><h2 style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase" class="muted">Before you vote</h2>${linksHtml(S.ballot.links)}</div>` : ''}
   </div>${footer()}`;
 }
 
 function viewAbout() {
   const steps = [
-    ['pin', '01 · Locate', 'ZIP → districts', 'Turn the ZIP code (or street address, when a ZIP crosses district lines) into every district the voter sits in.'],
+    ['pin', '01 · Locate', 'Your districts', 'Statewide and countywide races apply to everyone; U.S. House, Texas House, commissioner and JP races depend on where you live.'],
     ['clipboard', '02 · Ingest', 'Pull races & records', 'Collect contests, candidates, filings, votes, statements, websites and news from the sources below.'],
     ['people', '03 · Resolve', 'One person, one record', 'Match the same candidate across sources by name, office, district and filing IDs.'],
     ['bubbles', '04 · Extract', 'Score stances', 'An AI model maps each sourced passage to the 24 statements on a −2 to +2 scale, with a citation and confidence level.'],
     ['shield', '05 · Review', 'Check & publish', 'Low-confidence or conflicting stances go to human review. Summaries are rebuilt and every change is logged.'],
   ];
   const src = [
-    ['Google Civic Information API', 'Contests and candidates by address, election dates, polling places', 'Live on every lookup'],
+    ['Denton County Elections (official contest list)', 'Every race, candidate and proposition on the Nov. 3 ballot', 'Before each election'],
     ['State Secretary of State & county election offices', 'Official candidate filings and sample ballots — the source of truth for who is running', 'Daily'],
     ['OpenFEC (Federal Election Commission API)', 'Federal candidate registrations, committees and fundraising', 'Daily'],
     ['Ballotpedia (licensed data)', 'Local and down-ballot races, bios, candidate surveys', 'Daily'],
@@ -448,7 +523,7 @@ function viewAbout() {
       <div class="kicker">Behind the app</div>
       <h1 class="page-h1" tabindex="-1">How the data stays current — and neutral</h1>
       <p class="muted" style="font-size:17px;margin:10px 0 0;max-width:760px">From a ZIP code to a sourced, issue-by-issue profile of every candidate on the ballot.</p>
-      <div class="notice" style="margin-top:16px">${LIVE ? 'Live ballots are on: races and candidates come from the Google Civic Information API. Stance records come from this app’s stance file.' : 'This copy is in demo mode with fictional candidates. Add an API key to turn on live ballots.'}</div>
+      <div class="notice" style="margin-top:16px">${'This Denton County edition was researched on ' + esc(fmtDate(DENTON.researched)) + '. Races come from the county\u2019s official contest list; positions come from the sources linked on each candidate\u2019s profile.'}</div>
     </div>
     <section class="stack">
       <h2 class="h-ic">The pipeline</h2>
@@ -557,18 +632,17 @@ function steps(r) {
   const ol = $('#steps');
   if (idx === undefined) { ol.parentElement.hidden = true; return; }
   ol.parentElement.hidden = false;
-  ol.innerHTML = ['Location', 'Races', 'Your values', 'Matches'].map((l, i) =>
+  ol.innerHTML = ['Districts', 'Races', 'Your values', 'Matches'].map((l, i) =>
     `<li class="step ${i < idx ? 'done' : i === idx ? 'active' : ''}" ${i === idx ? 'aria-current="step"' : ''}>${l}</li>`).join('');
 }
 
 function wireStart() {
-  const f = $('#zipform'), zip = $('#zip'), addr = $('#addr'), err = $('#ziperr');
-  zip.addEventListener('input', () => { zip.value = zip.value.replace(/\D/g, '').slice(0, 5); err.hidden = true; });
-  f.addEventListener('submit', ev => {
+  document.querySelectorAll('[data-dist]').forEach(el => el.addEventListener('change', () => { S.dist[el.dataset.dist] = el.value; save(); }));
+  $('#distform').addEventListener('submit', ev => {
     ev.preventDefault();
-    if (!/^\d{5}$/.test(zip.value)) { err.hidden = false; zip.setAttribute('aria-invalid', 'true'); zip.focus(); return; }
-    S.zip = zip.value; S.address = addr.value; save();
-    lookup(false);
+    DIST_KEYS.forEach(k => { S.dist[k] = $('#d-' + k).value; });
+    S.ballot = buildBallot(); S.sel = S.ballot.contests.map((_, i) => i); S.all = true;
+    save(); go('#/races');
   });
   // iOS install tip
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -595,6 +669,7 @@ function act(name, el) {
     }
     case 'mode': S.mode = el.dataset.v; save(); render(); break;
     case 'start-quiz': go('#/quiz/1'); break;
+    case 'preset': { const p = DENTON.presets[+el.dataset.i]; DIST_KEYS.forEach(k => { S.dist[k] = p[k] || ''; }); save(); render(); break; }
     case 'ans': S.ans[q.id] = +el.dataset.v; save(); render(); break;
     case 'imp': S.imp[q.id] = +el.dataset.v; save(); render(); break;
     case 'next': if (typeof S.ans[q.id] !== 'number') return; go(n < list.length ? '#/quiz/' + (n + 1) : '#/results'); break;
@@ -604,7 +679,7 @@ function act(name, el) {
     case 'change': go('#/races'); break;
     case 'demo': S.zip = ($('#zip') && /^\d{5}$/.test($('#zip').value)) ? $('#zip').value : ''; save(); lookup(true); break;
     case 'close-about': if (history.length > 1) history.back(); else go('#/start'); break;
-    case 'restart': store.clear(); Object.assign(S, { zip: '', address: '', ballot: null, sel: [], all: true, mode: 'full', ans: {}, imp: {}, error: '' }); go('#/start'); break;
+    case 'restart': store.clear(); Object.assign(S, { zip: '', address: '', ballot: null, sel: [], all: true, mode: 'full', ans: {}, imp: {}, error: '', dist: { cd: '', hd: '', pct: '', jp: '' } }); go('#/start'); break;
     case 'ios-done': store.set('iosTipDone', true); $('#ios-tip').innerHTML = ''; break;
     default: break;
   }
@@ -648,6 +723,7 @@ async function boot() {
       fetch('stances.json').then(r => r.json()),
       fetch('demo-ballot.json').then(r => r.json()),
     ]);
+    DENTON = await fetch('denton.json').then(r => r.json());
     TOPICS = qd.topics; QUESTIONS = qd.questions; STANCES = sd.candidates || {}; DEMO = dd;
   } catch (e) {
     $('#app').innerHTML = '<div class="card notice warn">Ballot Match couldn’t load its data files. If you opened index.html directly from your computer, run it from a web server or GitHub Pages instead (see README).</div>';

@@ -1,6 +1,6 @@
 // Ballot Match service worker: offline app shell, fresh data.
 // Bump VERSION whenever you change app files so phones pick up the update.
-const VERSION = 'bm-v4';
+const VERSION = 'bm-v6';
 const SHELL = [
   './',
   './index.html',
@@ -16,6 +16,7 @@ const SHELL = [
   './questions.json',
   './stances.json',
   './demo-ballot.json',
+  './denton.json',
 ];
 
 self.addEventListener('install', e => {

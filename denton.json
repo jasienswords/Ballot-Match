@@ -1,0 +1,524 @@
+{
+ "county": "Denton County, Texas",
+ "researched": "2026-10-21",
+ "election": {
+  "name": "2026 General Election",
+  "electionDay": "2026-11-03",
+  "earlyVoting": "Early voting runs Oct. 19–30"
+ },
+ "notice": "Races and candidates come from Denton County’s official contest list. Candidate positions were researched from public sources on Oct. 21, 2026.",
+ "links": [
+  {
+   "label": "Look up your districts & sample ballot",
+   "url": "https://www.votedenton.gov/"
+  },
+  {
+   "label": "Check registration & polling place",
+   "url": "https://teamrv-mvp.sos.texas.gov/MVP/mvp.do"
+  },
+  {
+   "label": "Texas election information",
+   "url": "https://www.sos.state.tx.us/elections/"
+  }
+ ],
+ "statewide": [
+  {
+   "office": "U.S. Senate",
+   "level": "Federal",
+   "district": "Texas",
+   "candidates": [
+    {
+     "name": "Ken Paxton",
+     "party": "Republican",
+     "role": "Texas attorney general since 2015",
+     "bio": "Texas attorney general since 2015 and a former state senator and state representative. Won the Republican nomination in a May runoff against Sen. John Cornyn."
+    },
+    {
+     "name": "James Talarico",
+     "party": "Democratic",
+     "role": "State representative, former teacher",
+     "bio": "State representative from Round Rock since 2019 and a former middle-school teacher. Campaigning on cost of living, healthcare and ending tariffs."
+    },
+    {
+     "name": "Ted Brown",
+     "party": "Libertarian",
+     "role": "Libertarian nominee",
+     "bio": "Libertarian nominee campaigning on repealing the federal gas tax, ending tariffs, and ending U.S. military involvement in the Middle East."
+    }
+   ]
+  },
+  {
+   "office": "Governor",
+   "level": "State",
+   "district": "Texas",
+   "candidates": [
+    {
+     "name": "Greg Abbott",
+     "party": "Republican",
+     "role": "Governor since 2015",
+     "bio": "Governor since 2015, seeking a fourth term. Former Texas attorney general and Texas Supreme Court justice."
+    },
+    {
+     "name": "Gina Hinojosa",
+     "party": "Democratic",
+     "role": "State representative, civil rights lawyer",
+     "bio": "State representative from Austin since 2017, civil rights and union lawyer, and former Austin ISD board president."
+    },
+    {
+     "name": "Pat Dixon",
+     "party": "Libertarian",
+     "role": "Former Libertarian Party of Texas chair",
+     "bio": "Former chair of the Libertarian Party of Texas."
+    }
+   ]
+  },
+  {
+   "office": "Lieutenant Governor",
+   "level": "State",
+   "district": "Texas",
+   "candidates": [
+    {
+     "name": "Dan Patrick",
+     "party": "Republican",
+     "role": "Lieutenant governor since 2015",
+     "bio": "Lieutenant governor since 2015 and a former state senator. Presides over the Texas Senate."
+    },
+    {
+     "name": "Vikki Goodwin",
+     "party": "Democratic",
+     "role": "State representative",
+     "bio": "State representative from Austin. Running on public school funding and a state-run health coverage option."
+    },
+    {
+     "name": "Anthony Cristo",
+     "party": "Libertarian",
+     "role": "Libertarian nominee",
+     "bio": "Libertarian nominee."
+    },
+    {
+     "name": "Kevin McCormick",
+     "party": "Green",
+     "role": "Green Party nominee",
+     "bio": "Green Party nominee."
+    }
+   ]
+  },
+  {
+   "office": "Attorney General",
+   "level": "State",
+   "district": "Texas",
+   "candidates": [
+    {
+     "name": "Mayes Middleton",
+     "party": "Republican",
+     "role": "State senator, District 11",
+     "bio": "State senator from Galveston since 2023 and former state representative. Won the Republican runoff against U.S. Rep. Chip Roy."
+    },
+    {
+     "name": "Nathan Johnson",
+     "party": "Democratic",
+     "role": "State senator, District 16",
+     "bio": "State senator from Dallas since 2019; lawyer and mediator. Running on rebuilding trust in the office and consumer protection."
+    },
+    {
+     "name": "Tom Oxford",
+     "party": "Libertarian",
+     "role": "Libertarian nominee",
+     "bio": "Libertarian nominee and attorney."
+    }
+   ]
+  },
+  {
+   "office": "State Board of Education — District 14",
+   "level": "State",
+   "district": "All of Denton County",
+   "candidates": [
+    {
+     "name": "Mindy Bumgarner",
+     "party": "Republican",
+     "role": "Republican nominee",
+     "bio": "Republican nominee from Flower Mound."
+    },
+    {
+     "name": "Amy Taylor",
+     "party": "Democratic",
+     "role": "Public school teacher",
+     "bio": "Teacher at a Title I school in Denton. Top priority: hiring and keeping certified teachers."
+    }
+   ]
+  },
+  {
+   "office": "Denton County Judge",
+   "level": "Local",
+   "district": "Countywide",
+   "candidates": [
+    {
+     "name": "Andy Eads",
+     "party": "Republican",
+     "role": "Denton County judge (incumbent)",
+     "bio": "Incumbent county judge from Flower Mound seeking a third term; former county commissioner."
+    },
+    {
+     "name": "Nick Pappas",
+     "party": "Democratic",
+     "role": "Democratic challenger",
+     "bio": "Challenger from Lewisville proposing a jail diversion center, a county hospital district and a bigger homestead exemption."
+    }
+   ]
+  }
+ ],
+ "districts": {
+  "cd": {
+   "label": "U.S. House district",
+   "options": {
+    "4": {
+     "office": "U.S. House — District 4",
+     "level": "Federal",
+     "district": "Eastern Denton County",
+     "candidates": [
+      {
+       "name": "Pat Fallon",
+       "party": "Republican",
+       "role": "U.S. representative since 2021",
+       "bio": "Congressman since 2021; former state senator, state representative and Frisco council member; Air Force veteran."
+      },
+      {
+       "name": "Jason Pearce",
+       "party": "Democratic",
+       "role": "Democratic nominee",
+       "bio": "Has worked in customer service, as a chef, security manager and insurance adviser."
+      }
+     ]
+    },
+    "13": {
+     "office": "U.S. House — District 13",
+     "level": "Federal",
+     "district": "Northwest and central Denton County",
+     "candidates": [
+      {
+       "name": "Ronny Jackson",
+       "party": "Republican",
+       "role": "U.S. representative since 2021",
+       "bio": "Congressman since 2021; former White House physician under Presidents Obama and Trump."
+      },
+      {
+       "name": "Mark Nair",
+       "party": "Democratic",
+       "role": "Former Amarillo City Council member",
+       "bio": "Former member of the Amarillo City Council."
+      }
+     ]
+    },
+    "26": {
+     "office": "U.S. House — District 26",
+     "level": "Federal",
+     "district": "Most of Denton County",
+     "candidates": [
+      {
+       "name": "Brandon Gill",
+       "party": "Republican",
+       "role": "U.S. representative since 2025",
+       "bio": "Incumbent congressman from Flower Mound. Founder of the DC Enquirer and a former investment banking analyst."
+      },
+      {
+       "name": "Steven Shook",
+       "party": "Democratic",
+       "role": "Nurse practitioner",
+       "bio": "Nurse practitioner for nearly 20 years and Arlington native. Running on rural hospitals, healthcare costs and community policing."
+      },
+      {
+       "name": "Phil Gray",
+       "party": "Libertarian",
+       "role": "Libertarian nominee",
+       "bio": "Libertarian nominee; also ran for this seat in 2024."
+      }
+     ]
+    }
+   }
+  },
+  "hd": {
+   "label": "Texas House district",
+   "options": {
+    "57": {
+     "office": "State Representative — District 57",
+     "level": "State",
+     "district": "",
+     "candidates": [
+      {
+       "name": "Richard Hayes",
+       "party": "Republican",
+       "role": "State representative (incumbent)",
+       "bio": "Incumbent state representative from Hickory Creek."
+      },
+      {
+       "name": "Ray Stith",
+       "party": "Democratic",
+       "role": "Army veteran, small-business owner",
+       "bio": "West Point graduate and Army combat veteran; HR executive and small-business owner. Priorities: public school funding, infrastructure, veterans."
+      },
+      {
+       "name": "Darren Hamilton",
+       "party": "Libertarian",
+       "role": "Libertarian nominee",
+       "bio": "Marine veteran and senior data architect; wants smaller, more transparent government and protection of property rights."
+      }
+     ]
+    },
+    "63": {
+     "office": "State Representative — District 63",
+     "level": "State",
+     "district": "Most of Flower Mound, Lewisville, Roanoke, Trophy Club",
+     "candidates": [
+      {
+       "name": "Ben Bumgarner",
+       "party": "Republican",
+       "role": "State representative since 2023",
+       "bio": "State representative since 2023, firearms-company owner, and former Flower Mound Town Council member."
+      },
+      {
+       "name": "Denise Wooten",
+       "party": "Democratic",
+       "role": "Psychologist",
+       "bio": "Psychologist with a human-services background; the Democratic nominee for this seat in 2022."
+      }
+     ]
+    },
+    "64": {
+     "office": "State Representative — District 64",
+     "level": "State",
+     "district": "Includes part of Denton",
+     "candidates": [
+      {
+       "name": "Andy Hopper",
+       "party": "Republican",
+       "role": "State representative (incumbent)",
+       "bio": "Incumbent from Decatur and software engineer. Priorities: eliminating property taxes, border security, Texas sovereignty, protecting the unborn."
+      },
+      {
+       "name": "Julie Evans",
+       "party": "Democratic",
+       "role": "Retired special-education teacher",
+       "bio": "Retired special-education educator. Priorities: public schools, local hospitals, water conservation and a higher minimum wage."
+      }
+     ]
+    },
+    "65": {
+     "office": "State Representative — District 65",
+     "level": "State",
+     "district": "",
+     "candidates": [
+      {
+       "name": "Mitch Little",
+       "party": "Republican",
+       "role": "State representative since 2025",
+       "bio": "Business trial lawyer from Lewisville; served on Ken Paxton’s impeachment defense team."
+      },
+      {
+       "name": "Detrick DeBurr",
+       "party": "Democratic",
+       "role": "Democratic nominee",
+       "bio": "Democratic nominee; also ran for this seat in 2024."
+      }
+     ]
+    },
+    "106": {
+     "office": "State Representative — District 106",
+     "level": "State",
+     "district": "",
+     "candidates": [
+      {
+       "name": "Jared Patterson",
+       "party": "Republican",
+       "role": "State representative (incumbent)",
+       "bio": "Incumbent state representative from Frisco."
+      },
+      {
+       "name": "Joe Mayes",
+       "party": "Democratic",
+       "role": "Air Force veteran, bookstore owner",
+       "bio": "Air Force veteran and owner of Patchouli Joe’s Books & Indulgences."
+      }
+     ]
+    }
+   }
+  },
+  "pct": {
+   "label": "County commissioner precinct",
+   "options": {
+    "2": {
+     "office": "County Commissioner — Precinct 2",
+     "level": "Local",
+     "district": "Southeast Denton County",
+     "candidates": [
+      {
+       "name": "Kevin Falconer",
+       "party": "Republican",
+       "role": "County commissioner (incumbent)",
+       "bio": "Incumbent Precinct 2 commissioner."
+      },
+      {
+       "name": "Candace Valenzuela",
+       "party": "Democratic",
+       "role": "Former HUD regional administrator",
+       "bio": "Former HUD regional administrator and Carrollton-Farmers Branch ISD trustee; 2020 Democratic nominee for Congress."
+      }
+     ]
+    },
+    "4": {
+     "office": "County Commissioner — Precinct 4",
+     "level": "Local",
+     "district": "Southwest Denton County",
+     "candidates": [
+      {
+       "name": "David Wylie",
+       "party": "Republican",
+       "role": "Software developer, GOP precinct chair",
+       "bio": "Application developer and systems architect; Republican precinct chair and State Republican Executive Committee member."
+      },
+      {
+       "name": "Stephanie Draper",
+       "party": "Democratic",
+       "role": "Event planner and podcaster",
+       "bio": "Event planner and podcaster; 2024 Democratic nominee for state Senate District 12."
+      }
+     ]
+    }
+   },
+   "none": [
+    "1",
+    "3"
+   ],
+   "noneNote": "Precincts 1 and 3 have no commissioner race this year."
+  },
+  "jp": {
+   "label": "Justice of the peace precinct",
+   "options": {},
+   "info": {
+    "1": "Alan Wheeler (R) · Brandon Chase McGee (D)",
+    "2": "Chris Pochyla (R) · Katrina D. Moore (D)",
+    "3": "James Kerbow (R) · Trista Willeford (D)",
+    "4": "Harris Hughey (R) · Will Robertson (D)",
+    "5": "Vince Handler (R) · Patrece Perry (D)",
+    "6": "Blanca Oliver (R) · Michelle Butler (D)"
+   }
+  }
+ },
+ "presets": [
+  {
+   "label": "I live in Flower Mound",
+   "note": "Most of Flower Mound",
+   "cd": "26",
+   "hd": "63",
+   "pct": "4",
+   "jp": "4"
+  }
+ ],
+ "extras": [
+  {
+   "office": "Comptroller of Public Accounts",
+   "candidates": "Don Huffines (R) · Sarah Eckhardt (D) · V. Alonzo Echavarria-Garza (L) · Shehla Faizi (G)"
+  },
+  {
+   "office": "Commissioner of the General Land Office",
+   "candidates": "Dawn Buckingham (R) · Benjamin Flores (D) · Neill Snider (L)"
+  },
+  {
+   "office": "Commissioner of Agriculture",
+   "candidates": "Nate Sheets (R) · Clayton Tucker (D) · Austin R. Kelly (L)"
+  },
+  {
+   "office": "Railroad Commissioner",
+   "candidates": "Bo French (R) · Jon Rosenthal (D) · Arthur DiBianca (L)"
+  },
+  {
+   "office": "Chief Justice, Texas Supreme Court",
+   "candidates": "Jimmy Blacklock (R) · Maggie Ellis (D)"
+  },
+  {
+   "office": "Justice, Supreme Court, Place 2 (unexpired)",
+   "candidates": "James P. Sullivan (R) · Chari Kelly (D)"
+  },
+  {
+   "office": "Justice, Supreme Court, Place 7",
+   "candidates": "Kyle Hawkins (R) · Kristen Hawkins (D)"
+  },
+  {
+   "office": "Justice, Supreme Court, Place 8",
+   "candidates": "Brett Busby (R) · Gisela D. Triana (D)"
+  },
+  {
+   "office": "Judge, Court of Criminal Appeals, Place 3",
+   "candidates": "Thomas Smith (R) · Okey Anyiam (D) · Mark Ash (L)"
+  },
+  {
+   "office": "Judge, Court of Criminal Appeals, Place 4",
+   "candidates": "Kevin Patrick Yeary (R) · Audra Riley (D)"
+  },
+  {
+   "office": "Judge, Court of Criminal Appeals, Place 9",
+   "candidates": "John Messinger (R) · Holly Taylor (D)"
+  },
+  {
+   "office": "Chief Justice, 15th Court of Appeals",
+   "candidates": "Scott Brister (R) · Jerry Zimmerer (D)"
+  },
+  {
+   "office": "Justice, 15th Court of Appeals, Place 2",
+   "candidates": "Scott K. Field (R) · Tom Baker (D)"
+  },
+  {
+   "office": "Justice, 15th Court of Appeals, Place 3",
+   "candidates": "April Farris (R) · Marc M. Meyer (D)"
+  },
+  {
+   "office": "District Judge, 481st District",
+   "candidates": "Crystal Edmonson Levonius (R) · Seth Fuller (D)"
+  },
+  {
+   "office": "County Clerk",
+   "candidates": "Juli Luke (R) · Dale Frey (D)"
+  },
+  {
+   "office": "Denton Central Appraisal District Board, Place 3",
+   "candidates": "Rick Guzman · Edwin Irungu (nonpartisan)"
+  },
+  {
+   "office": "Unopposed",
+   "candidates": "Several judges and county offices have one candidate, including Criminal District Attorney Paul Johnson, District Clerk David Trantham and County Treasurer Cindy Yeatts Brown."
+  }
+ ],
+ "props": [
+  {
+   "title": "Town of Flower Mound, Proposition A",
+   "text": "Reauthorizes the local sales tax of 1/4 of 1% for street maintenance and repair for four more years. It doesn’t raise the current rate."
+  },
+  {
+   "title": "Bartonville, Justin and Lake Dallas, Proposition A",
+   "text": "Each town asks voters to reauthorize its street-maintenance sales tax."
+  },
+  {
+   "title": "Town of Double Oak, Proposition A",
+   "text": "Legalizes alcohol sales, including mixed beverages."
+  },
+  {
+   "title": "Town of Hickory Creek, Proposition A",
+   "text": "Ends the Economic Development Corporation and adopts a 1.75% sales tax."
+  },
+  {
+   "title": "City of Dallas, Proposition A",
+   "text": "$443 million in public safety bonds; a tax increase."
+  },
+  {
+   "title": "City of Plano, Proposition A",
+   "text": "Financing a multipurpose arena through several possible taxes; a tax increase."
+  },
+  {
+   "title": "City of Denton and The Colony",
+   "text": "Denton votes on City Council District 1 (unexpired term); The Colony votes on City Council Places 3–6."
+  },
+  {
+   "title": "Water, utility and improvement districts",
+   "text": "Several MUD, water and improvement districts have bond and tax propositions. Check your sample ballot to see if one is yours."
+  }
+ ]
+}
