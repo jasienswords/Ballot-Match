@@ -1,0 +1,210 @@
+{
+  "topics": [
+    "Abortion & right to life",
+    "Taxes, inflation & cost of living",
+    "Immigration & citizenship",
+    "Gender, identity & equality",
+    "Education",
+    "Healthcare & affordability",
+    "Climate & energy",
+    "Criminal justice",
+    "National security",
+    "Debt & government funding",
+    "Religion & church/state",
+    "Guns & the Second Amendment"
+  ],
+  "questions": [
+    {
+      "id": 0,
+      "topic": 0,
+      "text": "Abortion should be legal in all or most cases.",
+      "agree": "Supports keeping abortion legal in all or most cases",
+      "disagree": "Opposes legal abortion in most cases",
+      "short": "abortion access"
+    },
+    {
+      "id": 1,
+      "topic": 0,
+      "text": "Abortion should be banned once cardiac activity is detected (about six weeks), except to save the mother’s life.",
+      "agree": "Supports a six-week abortion limit",
+      "disagree": "Opposes a six-week abortion limit",
+      "short": "early abortion limits"
+    },
+    {
+      "id": 2,
+      "topic": 1,
+      "text": "Taxes on households earning more than $400,000 a year should go up.",
+      "agree": "Supports higher taxes on incomes over $400K",
+      "disagree": "Opposes raising taxes on high earners",
+      "short": "taxes on high earners"
+    },
+    {
+      "id": 3,
+      "topic": 1,
+      "text": "Cutting government spending is the best way to bring down inflation and living costs.",
+      "agree": "Prioritizes spending cuts to fight inflation",
+      "disagree": "Does not see spending cuts as the main fix for inflation",
+      "short": "spending and inflation"
+    },
+    {
+      "id": 4,
+      "topic": 2,
+      "text": "People living in the U.S. illegally should have a path to citizenship if they meet set requirements.",
+      "agree": "Supports a path to citizenship for undocumented residents",
+      "disagree": "Opposes a path to citizenship for those here illegally",
+      "short": "path to citizenship"
+    },
+    {
+      "id": 5,
+      "topic": 2,
+      "text": "Deporting people living in the U.S. illegally should be a top enforcement priority.",
+      "agree": "Makes deportation a top enforcement priority",
+      "disagree": "Opposes making mass deportation a priority",
+      "short": "deportation"
+    },
+    {
+      "id": 6,
+      "topic": 3,
+      "text": "Sexual orientation and gender identity should be protected under federal civil-rights law.",
+      "agree": "Supports civil-rights protections for sexual orientation and gender identity",
+      "disagree": "Opposes adding sexual orientation and gender identity to civil-rights law",
+      "short": "LGBTQ civil-rights protections"
+    },
+    {
+      "id": 7,
+      "topic": 3,
+      "text": "Transgender athletes should compete in the category that matches their sex at birth.",
+      "agree": "Supports sports categories based on sex at birth",
+      "disagree": "Supports letting transgender athletes compete by gender identity",
+      "short": "transgender athletes"
+    },
+    {
+      "id": 8,
+      "topic": 4,
+      "text": "Public education funds should follow students to private or religious schools (school choice).",
+      "agree": "Supports school choice and vouchers",
+      "disagree": "Opposes using public funds for private-school vouchers",
+      "short": "school vouchers"
+    },
+    {
+      "id": 9,
+      "topic": 4,
+      "text": "Parents should have the final say over curriculum and library books in public schools.",
+      "agree": "Supports parents having final say on curriculum and library books",
+      "disagree": "Prefers that educators and school boards set curriculum",
+      "short": "curriculum control"
+    },
+    {
+      "id": 10,
+      "topic": 5,
+      "text": "The federal government should guarantee health coverage for every American.",
+      "agree": "Supports a federal guarantee of health coverage",
+      "disagree": "Opposes a federal coverage guarantee; favors market options",
+      "short": "universal coverage"
+    },
+    {
+      "id": 11,
+      "topic": 5,
+      "text": "The government should negotiate or cap prescription drug prices.",
+      "agree": "Supports government negotiation or caps on drug prices",
+      "disagree": "Opposes government drug-price controls",
+      "short": "drug prices"
+    },
+    {
+      "id": 12,
+      "topic": 6,
+      "text": "Government should require a transition away from fossil fuels to cut emissions.",
+      "agree": "Supports a required transition away from fossil fuels",
+      "disagree": "Opposes mandates to phase out fossil fuels",
+      "short": "fossil-fuel transition"
+    },
+    {
+      "id": 13,
+      "topic": 6,
+      "text": "Expanding domestic oil, gas and pipeline production should be a priority.",
+      "agree": "Supports expanding domestic oil, gas and pipelines",
+      "disagree": "Opposes expanding fossil-fuel production",
+      "short": "oil and gas expansion"
+    },
+    {
+      "id": 14,
+      "topic": 7,
+      "text": "Cash bail should be eliminated for people charged with nonviolent offenses.",
+      "agree": "Supports ending cash bail for nonviolent offenses",
+      "disagree": "Supports keeping cash bail",
+      "short": "cash bail"
+    },
+    {
+      "id": 15,
+      "topic": 7,
+      "text": "Increasing police funding and staffing is the best way to reduce crime.",
+      "agree": "Supports more police funding and staffing",
+      "disagree": "Favors shifting some police funding to other services",
+      "short": "police funding"
+    },
+    {
+      "id": 16,
+      "topic": 8,
+      "text": "The U.S. should keep sending military and financial aid to allies in active wars.",
+      "agree": "Supports continued aid to allies in active conflicts",
+      "disagree": "Opposes continued foreign war aid",
+      "short": "foreign military aid"
+    },
+    {
+      "id": 17,
+      "topic": 8,
+      "text": "U.S. defense spending should increase.",
+      "agree": "Supports increasing defense spending",
+      "disagree": "Supports holding or cutting defense spending",
+      "short": "defense spending"
+    },
+    {
+      "id": 18,
+      "topic": 9,
+      "text": "Government should be required to balance its budget, even if that means cutting programs.",
+      "agree": "Supports a balanced-budget requirement",
+      "disagree": "Opposes a balanced-budget requirement",
+      "short": "balanced budgets"
+    },
+    {
+      "id": 19,
+      "topic": 9,
+      "text": "More decisions and dollars should shift from the federal government to state and local governments.",
+      "agree": "Supports shifting power and funding to state and local government",
+      "disagree": "Supports a strong federal role in funding and standards",
+      "short": "federal vs. local control"
+    },
+    {
+      "id": 20,
+      "topic": 10,
+      "text": "Ten Commandments displays and staff-led prayer should be allowed in public schools.",
+      "agree": "Supports allowing Ten Commandments displays and staff-led prayer in public schools",
+      "disagree": "Opposes religious displays and staff-led prayer in public schools",
+      "short": "religion in public schools"
+    },
+    {
+      "id": 21,
+      "topic": 10,
+      "text": "Business owners should be able to decline services that conflict with their religious beliefs.",
+      "agree": "Supports letting businesses decline services on religious grounds",
+      "disagree": "Opposes religious exemptions from anti-discrimination rules",
+      "short": "religious exemptions"
+    },
+    {
+      "id": 22,
+      "topic": 11,
+      "text": "Background checks should be required for all gun sales, including private sales.",
+      "agree": "Supports universal background checks",
+      "disagree": "Opposes background checks on private sales",
+      "short": "background checks"
+    },
+    {
+      "id": 23,
+      "topic": 11,
+      "text": "Adults should be able to carry a handgun without a permit.",
+      "agree": "Supports permitless carry",
+      "disagree": "Opposes permitless carry",
+      "short": "permitless carry"
+    }
+  ]
+}

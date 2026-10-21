@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ballot Match — Nonpartisan voter guide</title>
+  <meta name="description" content="Enter your ZIP code, answer questions on the issues, and see which candidates on your ballot share your values. Nonpartisan.">
+  <meta name="theme-color" content="#0B1F3A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ballot Match">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <a class="skip" href="#app">Skip to content</a>
+  <div class="stripe" aria-hidden="true"><span></span><span></span><span></span></div>
+  <header class="topbar">
+    <div class="wrap topbar-in">
+      <a class="brand" href="#/start" aria-label="Ballot Match home">
+        <span class="brand-mark" id="brand-mark"></span>
+        <span class="brand-text">
+          <span class="brand-name">Ballot Match</span>
+          <span class="brand-sub">Nonpartisan voter guide</span>
+        </span>
+      </a>
+      <div class="topbar-actions">
+        <button type="button" class="chip-btn" id="install-btn" hidden>Install</button>
+        <a class="chip-btn" href="#/about"><span class="lbl-short">About</span><span class="lbl-long">How it works</span></a>
+      </div>
+    </div>
+  </header>
+  <nav class="progress" aria-label="Progress"><ol class="wrap" id="steps"></ol></nav>
+  <main id="app" class="wrap" tabindex="-1"></main>
+  <div class="actionbar" id="actionbar" hidden><div class="wrap actionbar-in" id="actionbar-in"></div></div>
+  <noscript><p class="wrap">Ballot Match needs JavaScript turned on.</p></noscript>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

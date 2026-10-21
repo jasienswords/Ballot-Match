@@ -1,0 +1,27 @@
+{
+  "_readme": "Candidate stance records. Key = candidate name in lower case with non-letters replaced by hyphens (e.g. \"jane-q-public\"). positions: 24 values, one per question in questions.json, from -2 (strongly disagree) to 2 (strongly agree), or null when no public stance was found. sources: list of {label, url}.",
+  "updated": "2026-10-21",
+  "candidates": {
+    "margaret-ellison": {"name": "Margaret Ellison", "demo": true, "positions": [2, -2, 1, 0, 1, -1, 2, -1, -1, 0, 1, 2, 1, 1, 0, 1, 2, 0, 0, 0, -1, -1, 2, -2], "sources": []},
+    "daniel-ruiz-whitaker": {"name": "Daniel Ruiz-Whitaker", "demo": true, "positions": [-2, 2, -2, 2, -1, 2, -2, 2, 2, 2, -2, 0, -2, 2, -2, 2, 1, 2, 2, 2, 2, 2, -1, 2], "sources": []},
+    "priya-natarajan": {"name": "Priya Natarajan", "demo": true, "positions": [1, -1, -2, 2, 1, -2, 1, 0, 2, 1, -2, -1, -2, 1, 1, -1, -2, -2, 2, 2, -1, 1, -2, 2], "sources": []},
+    "caleb-brooks": {"name": "Caleb Brooks", "demo": true, "positions": [-2, 2, -1, 1, -2, 2, -2, 2, 2, 2, -1, 2, -2, 2, -2, 2, -2, 1, 1, 2, 2, 2, -2, 2], "sources": []},
+    "alicia-moreno": {"name": "Alicia Moreno", "demo": true, "positions": [2, -2, 2, -1, 2, -2, 2, -2, -2, -1, 2, 2, 2, -2, 2, -1, 2, -1, -2, -1, -2, -2, 2, -2], "sources": []},
+    "grant-holloway": {"name": "Grant Holloway", "demo": true, "positions": [1, -1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, -1, 1, 1, 1, 2, 0, 0, 0, 1, 0], "sources": []},
+    "raymond-teague": {"name": "Raymond Teague", "demo": true, "positions": [-2, 2, -2, 2, -2, 2, -2, 2, 2, 2, -2, 1, -2, 2, -2, 2, 1, 2, 2, 2, 2, 2, -1, 2], "sources": []},
+    "danielle-okafor": {"name": "Danielle Okafor", "demo": true, "positions": [2, -2, 1, 0, 1, -1, 2, -1, -1, 0, 1, 2, 1, 1, 0, 0, 2, 0, 0, 0, -1, -1, 2, -2], "sources": []},
+    "rosa-lindqvist": {"name": "Rosa Lindqvist", "demo": true, "positions": [2, -2, 2, -2, 2, -2, 2, -2, -2, -2, 2, 2, 2, -2, 2, -2, -1, -2, -2, 0, -2, -2, 2, -2], "sources": []},
+    "wesley-park": {"name": "Wesley Park", "demo": true, "positions": [-2, 2, -2, 2, -2, 2, -2, 2, 2, 2, -2, 1, -2, 2, -2, 2, 2, 2, 2, 2, 2, 2, 1, 2], "sources": []},
+    "hannah-cole": {"name": "Hannah Cole", "demo": true, "positions": [2, -2, 1, 1, 1, -1, 2, -1, -1, 0, 1, 2, 1, 1, 0, 1, 2, 0, 1, 0, -1, -1, 2, -2], "sources": []},
+    "luke-barrett": {"name": "Luke Barrett", "demo": true, "positions": [-2, 2, -1, 1, -2, 2, -2, 2, 2, 2, 0, 2, -2, 2, -2, 2, -2, 1, 1, 2, 2, 2, -2, 2], "sources": []},
+    "simone-fairchild": {"name": "Simone Fairchild", "demo": true, "positions": [2, -2, 2, -1, 2, -2, 2, -2, -2, -1, 2, 2, 2, -2, 2, -1, 1, -1, -2, -1, -2, -2, 2, -2], "sources": []},
+    "gary-whitfield": {"name": "Gary Whitfield", "demo": true, "positions": [null, null, -1, 2, 1, 1, null, null, null, null, null, null, null, null, -2, 2, null, null, 2, 2, null, null, null, null], "sources": []},
+    "teresa-alvarado": {"name": "Teresa Alvarado", "demo": true, "positions": [null, null, 1, 0, 1, -1, null, null, null, null, null, null, null, null, 1, 0, null, null, 1, 0, null, null, null, null], "sources": []},
+    "marcus-bell": {"name": "Marcus Bell", "demo": true, "positions": [null, null, null, null, null, null, -2, 2, 2, 2, null, null, null, null, null, null, null, null, 2, 2, 2, 2, 0, 1], "sources": []},
+    "jenna-kowalski": {"name": "Jenna Kowalski", "demo": true, "positions": [null, null, null, null, null, null, 2, -2, -2, -1, null, null, null, null, null, null, null, null, -2, -1, -2, -2, 2, -2], "sources": []},
+    "andrea-shah": {"name": "Andrea Shah", "demo": true, "positions": [null, null, null, null, null, null, 1, 1, -1, 0, null, null, null, null, null, null, null, null, 2, 0, -1, 0, 1, 0], "sources": []},
+    "benjamin-okoro": {"name": "Benjamin Okoro", "demo": true, "positions": [null, null, 0, 1, null, null, null, null, null, null, null, null, 1, 0, -1, 1, null, null, 1, 0, null, null, null, null], "sources": []},
+    "laura-jennings": {"name": "Laura Jennings", "demo": true, "positions": [null, null, -2, 2, null, null, null, null, null, null, null, null, -2, 2, -2, 2, null, null, 2, 2, null, null, null, null], "sources": []},
+    "victor-hale": {"name": "Victor Hale", "demo": true, "positions": [null, null, 2, -1, null, null, null, null, null, null, null, null, 2, -2, 2, 0, null, null, -2, -1, null, null, null, null], "sources": []}
+  }
+}

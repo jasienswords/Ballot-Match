@@ -1,0 +1,183 @@
+{
+  "source": "demo",
+  "election": {
+    "name": "General Election (demo ballot)",
+    "electionDay": "2026-11-03"
+  },
+  "contests": [
+    {
+      "office": "U.S. Senate",
+      "level": "Federal",
+      "candidates": [
+        {
+          "name": "Margaret Ellison",
+          "party": "Democratic",
+          "role": "State senator, former appellate judge",
+          "bio": "Two-term state senator and former state appellate judge. Has focused on healthcare costs, rural hospitals and water infrastructure."
+        },
+        {
+          "name": "Daniel Ruiz-Whitaker",
+          "party": "Republican",
+          "role": "Rancher, former county judge",
+          "bio": "Third-generation rancher and former county judge who served eight years in the state House. Campaigning on border security and lower taxes."
+        },
+        {
+          "name": "Priya Natarajan",
+          "party": "Libertarian",
+          "role": "Software engineer, small-business owner",
+          "bio": "Founder of a 30-person software firm, making her first run for office on cutting federal spending and protecting civil liberties."
+        }
+      ]
+    },
+    {
+      "office": "U.S. House — District 12",
+      "level": "Federal",
+      "candidates": [
+        {
+          "name": "Caleb Brooks",
+          "party": "Republican",
+          "role": "Army veteran, roofing-company owner",
+          "bio": "Army veteran and owner of a regional roofing company; served one term on the city council."
+        },
+        {
+          "name": "Alicia Moreno",
+          "party": "Democratic",
+          "role": "Pediatric nurse",
+          "bio": "Pediatric ICU nurse for 15 years and former nurses’ union organizer, running on healthcare affordability."
+        },
+        {
+          "name": "Grant Holloway",
+          "party": "Independent",
+          "role": "Former bank CFO",
+          "bio": "Former CFO of a regional bank, running without a party on deficit reduction and term limits."
+        }
+      ]
+    },
+    {
+      "office": "Governor",
+      "level": "State",
+      "candidates": [
+        {
+          "name": "Raymond Teague",
+          "party": "Republican",
+          "role": "Former lieutenant governor",
+          "bio": "Former two-term lieutenant governor and oil-field services executive. Emphasizes property-tax relief and energy production."
+        },
+        {
+          "name": "Danielle Okafor",
+          "party": "Democratic",
+          "role": "Former mayor, teacher",
+          "bio": "Former big-city mayor and public-school teacher. Emphasizes public-school funding and expanding healthcare access."
+        },
+        {
+          "name": "Rosa Lindqvist",
+          "party": "Green",
+          "role": "Environmental engineer",
+          "bio": "Environmental engineer and watershed advocate focused on grid reliability and clean water."
+        }
+      ]
+    },
+    {
+      "office": "State Senate — District 9",
+      "level": "State",
+      "candidates": [
+        {
+          "name": "Wesley Park",
+          "party": "Republican",
+          "role": "Family physician",
+          "bio": "Family physician and former school-board trustee. Prioritizes rural healthcare and school safety."
+        },
+        {
+          "name": "Hannah Cole",
+          "party": "Democratic",
+          "role": "Small-business attorney",
+          "bio": "Small-business attorney and former chamber of commerce chair, running as a pro-business moderate."
+        }
+      ]
+    },
+    {
+      "office": "State House — District 63",
+      "level": "State",
+      "candidates": [
+        {
+          "name": "Luke Barrett",
+          "party": "Republican",
+          "role": "Pastor, nonprofit director",
+          "bio": "Pastor and director of a food-assistance nonprofit; first-time candidate."
+        },
+        {
+          "name": "Simone Fairchild",
+          "party": "Democratic",
+          "role": "High-school counselor",
+          "bio": "High-school counselor and PTA leader focused on teacher pay and mental-health services."
+        }
+      ]
+    },
+    {
+      "office": "County Commissioner — Precinct 3",
+      "level": "Local",
+      "candidates": [
+        {
+          "name": "Gary Whitfield",
+          "party": "Republican",
+          "role": "Incumbent commissioner",
+          "bio": "Incumbent commissioner and former road-and-bridge supervisor. Running on holding the county tax rate flat."
+        },
+        {
+          "name": "Teresa Alvarado",
+          "party": "Democratic",
+          "role": "CPA, former county auditor",
+          "bio": "CPA and former assistant county auditor, focused on jail costs and budget transparency."
+        }
+      ]
+    },
+    {
+      "office": "School Board — Place 4",
+      "level": "Local",
+      "candidates": [
+        {
+          "name": "Marcus Bell",
+          "party": "Nonpartisan",
+          "role": "Youth pastor, parent of three",
+          "bio": "Youth pastor and parent of three district students. Campaigning on parental rights and school safety."
+        },
+        {
+          "name": "Jenna Kowalski",
+          "party": "Nonpartisan",
+          "role": "Retired teacher",
+          "bio": "Retired district science teacher with 28 years in the classroom; focused on teacher retention."
+        },
+        {
+          "name": "Andrea Shah",
+          "party": "Nonpartisan",
+          "role": "Engineer, PTA president",
+          "bio": "Engineer and PTA president; running on academic results and budget discipline."
+        }
+      ]
+    },
+    {
+      "office": "City Council — Place 2",
+      "level": "Local",
+      "candidates": [
+        {
+          "name": "Benjamin Okoro",
+          "party": "Nonpartisan",
+          "role": "Restaurant owner",
+          "bio": "Owner of two local restaurants; focused on small-business permitting and road repair."
+        },
+        {
+          "name": "Laura Jennings",
+          "party": "Nonpartisan",
+          "role": "Realtor, planning commissioner",
+          "bio": "Realtor and current planning commissioner; prioritizes lower property taxes and police staffing."
+        },
+        {
+          "name": "Victor Hale",
+          "party": "Nonpartisan",
+          "role": "Urban planner",
+          "bio": "Urban planner focused on parks, transit and energy-efficient city buildings."
+        }
+      ]
+    }
+  ]
+}
