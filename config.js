@@ -9,6 +9,6 @@
 // https://www.googleapis.com/civicinfo/v2/elections?key=YOUR_KEY
 
 export const CONFIG = {
-  CIVIC_API_KEY: '',
+  CIVIC_API_KEY: 'AIzaSyD2DkiUn-JK9moN1Gr9m-SghBK0-hv5_Xc',
   ELECTION_ID: '',
 };
