@@ -106,6 +106,7 @@ function levelOf(levels) {
   return 'Local';
 }
 function friendly(msg) {
+  if (/api key|referer|referrer|permission|forbidden|disabled|has not been used|blocked/i.test(msg)) return 'The app\u2019s API key isn\u2019t set up correctly. See "Turn on live ballots" in the README.';
   if (/parse address|address/i.test(msg)) return 'We couldn’t match that address. Check the street address and ZIP code.';
   if (/election unknown|no election/i.test(msg)) return 'Ballot information for the next election isn’t published for this address yet. Election officials usually release it a few weeks before Election Day.';
   if (/key|permission|referer|forbidden/i.test(msg)) return 'The app’s API key isn’t set up correctly. See "Turn on live ballots" in the README.';
@@ -117,7 +118,7 @@ async function fetchLive() {
   if (CONFIG.ELECTION_ID) url += '&electionId=' + encodeURIComponent(CONFIG.ELECTION_ID);
   let res, data;
   try { res = await fetch(url); data = await res.json(); } catch (e) { throw new Error('We couldn’t reach the ballot service. Check your connection and try again.'); }
-  if (!res.ok || data.error) throw new Error(friendly((data.error && data.error.message) || String(res.status)));
+  if (!res.ok || data.error) { const raw = (data.error && data.error.message) || ('HTTP ' + res.status); const err = new Error(friendly(raw)); err.detail = raw; throw err; }
   const order = { Federal: 0, State: 1, Local: 2 };
   const cts = (data.contests || [])
     .filter(c => c.type !== 'Referendum' && Array.isArray(c.candidates) && c.candidates.length)
@@ -148,7 +149,7 @@ function lookup(useDemo) {
     ? ['Loading the demo ballot', 'Matching candidates to stance records', 'Preparing your questions']
     : ['Finding your voting districts', 'Loading races and candidates from election officials’ data', 'Matching candidates to stance records', 'Preparing your questions'];
   S.load = { steps, step: 0 };
-  S.error = '';
+  S.error = ''; S.errorDetail = '';
   go('#/loading');
   const t0 = Date.now();
   const tick = setInterval(() => {
@@ -164,7 +165,7 @@ function lookup(useDemo) {
     }, wait);
   }).catch(err => {
     clearInterval(tick);
-    S.load = null; S.error = err.message || String(err);
+    S.load = null; S.error = err.message || String(err); S.errorDetail = err.detail || '';
     go('#/start');
   });
 }
@@ -195,7 +196,7 @@ function viewStart() {
       <div class="row kicker">${icon('calendar', 28)}<span>General Election · November 3, 2026</span></div>
       <h1>Find the candidates who share your values.</h1>
       <p class="lede">Enter the ZIP code where you’re registered to vote. We’ll pull the open races on your ballot — federal, state and local — and match you on 12 issues. Party labels stay hidden until your results.</p>
-      ${S.error ? `<div class="notice warn" role="alert" style="margin-bottom:18px">${esc(S.error)}</div>` : ''}
+      ${S.error ? `<div class="notice warn" role="alert" style="margin-bottom:18px;flex-direction:column;gap:6px"><span>${esc(S.error)}</span>${S.errorDetail ? `<span style="font-size:13px;color:var(--muted)">Details from Google: ${esc(S.errorDetail)}</span>` : ''}</div>` : ''}
       <form class="form" id="zipform" novalidate>
         <div>
           <label class="field-label" for="zip">ZIP code where you’re registered</label>

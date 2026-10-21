@@ -1,6 +1,6 @@
 // Ballot Match service worker: offline app shell, fresh data.
 // Bump VERSION whenever you change app files so phones pick up the update.
-const VERSION = 'bm-v3';
+const VERSION = 'bm-v4';
 const SHELL = [
   './',
   './index.html',
