@@ -1,6 +1,6 @@
 // Ballot Match service worker: offline app shell, fresh data.
-// Bump VERSION whenever you change app files so phones pick up the update.
-const VERSION = 'bm-v8';
+// App files load network-first, so updates appear right away; the cache is only an offline fallback.
+const VERSION = 'bm-v10';
 const SHELL = [
   './',
   './index.html',
@@ -65,9 +65,11 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Everything else: cache first, then network.
-  e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => {
-    if (res.ok) { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); }
-    return res;
-  }).catch(() => caches.match('./index.html'))));
+  // App files: network first (so updates show up immediately), cache when offline.
+  e.respondWith(
+    fetch(req, { cache: 'no-cache' }).then(res => {
+      if (res.ok) { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); }
+      return res;
+    }).catch(() => caches.match(req).then(hit => hit || caches.match('./index.html')))
+  );
 });

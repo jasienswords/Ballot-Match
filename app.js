@@ -5,6 +5,7 @@ import { icon, UI } from './icons.js';
    Ballot Match — app logic (no build step, no framework)
    ========================================================= */
 
+const APP_VERSION = '10';
 const LIVE = !!(CONFIG.CIVIC_API_KEY && CONFIG.CIVIC_API_KEY.trim());
 const OPTS = [[-2, 'Strongly disagree'], [-1, 'Disagree'], [0, 'Neutral'], [1, 'Agree'], [2, 'Strongly agree']];
 const IMPS = [[1, 'Low'], [2, 'Medium'], [3, 'High']];
@@ -225,7 +226,7 @@ function go(hash) { if (location.hash === hash) render(true); else location.hash
 const footer = () => `
   <footer class="foot">
     <span style="flex-wrap:nowrap;align-items:flex-start">${icon('shield', 20)}<span>Ballot Match does not endorse candidates or parties. Your answers stay on this device.</span></span>
-    <span>Confirm your sample ballot and polling place at <a href="https://www.votedenton.gov/" target="_blank" rel="noopener noreferrer">votedenton.gov</a>.${S.ballot ? ' <button type="button" class="linkbtn" data-act="restart" data-k="restart">Start over</button>' : ''}</span>
+    <span>App version ${APP_VERSION}. Confirm your sample ballot and polling place at <a href="https://www.votedenton.gov/" target="_blank" rel="noopener noreferrer">votedenton.gov</a>.${S.ballot ? ' <button type="button" class="linkbtn" data-act="restart" data-k="restart">Start over</button>' : ''}</span>
   </footer>`;
 
 function photo(c, cls = '') {
@@ -791,7 +792,9 @@ function act(name, el) {
     case 'start-quiz': go('#/quiz/1'); break;
     case 'pick': { const k = el.dataset.key, v = el.dataset.val; if (S.picks[k] === v) delete S.picks[k]; else S.picks[k] = v; save(); render(); break; }
     case 'print': {
-      const root = $('#print-root'); root.innerHTML = printCardHtml();
+      let root = $('#print-root');
+      if (!root) { root = document.createElement('div'); root.id = 'print-root'; root.setAttribute('aria-hidden', 'true'); document.body.appendChild(root); }
+      root.innerHTML = printCardHtml();
       const t = document.title; document.title = 'My Denton County Ballot Card';
       setTimeout(() => { window.print(); document.title = t; }, 50);
       break;
@@ -835,12 +838,6 @@ document.addEventListener('touchend', ev => {
   act(dx < 0 ? 'next' : 'back');
 }, { passive: true });
 
-/* ---------- install (Android / desktop Chrome) ---------- */
-let deferred = null;
-window.addEventListener('beforeinstallprompt', ev => { ev.preventDefault(); deferred = ev; $('#install-btn').hidden = false; });
-$('#install-btn').addEventListener('click', async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; $('#install-btn').hidden = true; });
-window.addEventListener('appinstalled', () => { $('#install-btn').hidden = true; });
-
 /* ---------- boot ---------- */
 async function boot() {
   $('#brand-mark').innerHTML = icon('ballot', 34);
@@ -860,7 +857,15 @@ async function boot() {
   WIDE.addEventListener('change', () => render(true));
   render(true);
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    // When a new version is published, switch to it right away.
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (hadController && !reloaded) { reloaded = true; location.reload(); }
+    });
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+      .then(reg => { reg.update(); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update(); }); })
+      .catch(() => {});
   }
 }
 boot();
