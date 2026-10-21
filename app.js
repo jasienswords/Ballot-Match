@@ -29,10 +29,11 @@ const S = {
   ans: store.get('ans', {}),
   imp: store.get('imp', {}),
   dist: store.get('dist', { cd: '', hd: '', pct: '', jp: '' }),
+  picks: store.get('picks', {}),
   error: '',
   load: null, // { steps: [], step: 0 }
 };
-function save() { ['zip', 'address', 'ballot', 'sel', 'all', 'mode', 'ans', 'imp', 'dist'].forEach(k => store.set(k, S[k])); }
+function save() { ['zip', 'address', 'ballot', 'sel', 'all', 'mode', 'ans', 'imp', 'dist', 'picks'].forEach(k => store.set(k, S[k])); }
 
 /* ---------- helpers ---------- */
 const $ = (s, el = document) => el.querySelector(s);
@@ -69,7 +70,10 @@ function evaluate(c) {
     tn[q.topic] += w * ag; td[q.topic] += w;
     out.per.push({ q, ag, w, a, p });
   });
-  out.pct = den ? Math.round(100 * num / den) : null;
+  // Thin records are pulled toward 50% so a candidate with only one or two known
+  // positions can't outrank one with a full record just by matching on those few.
+  const K = 4;
+  out.pct = den ? Math.round(100 * (num + K * 0.5) / (den + K)) : null;
   out.topic = tn.map((v, i) => (td[i] ? Math.round(100 * v / td[i]) : null));
   return out;
 }
@@ -307,6 +311,111 @@ function extrasHtml(b) {
   </details>`;
 }
 
+function pickExtrasHtml(b) {
+  if (!b || (!(b.extras || []).length && !(b.props || []).length)) return '';
+  const ex = (b.extras || []).map((x, i) => {
+    const names = parseNames(x.candidates);
+    return `<li class="xrow"><strong>${esc(x.office)}</strong>
+      ${names.length > 1 || (names.length === 1 && x.office !== 'Unopposed') ? `<div class="xopts">${names.map(n => `<label class="xopt">${pickBtn('x' + i, n, 'Select ' + n + ' for ' + x.office)}<span>${esc(n)}</span></label>`).join('')}</div>` : `<span class="muted">${esc(x.candidates)}</span>`}</li>`;
+  }).join('');
+  const pr = (b.props || []).map((x, i) => `<li class="xrow"><strong>${esc(x.title)}</strong><span class="muted">${esc(x.text)}</span>
+      ${/Proposition/.test(x.title) ? `<div class="xopts">${['For', 'Against'].map(v => `<label class="xopt">${pickBtn('p' + i, v, v + ' ' + x.title)}<span>${v}</span></label>`).join('')}</div>` : ''}</li>`).join('');
+  return `<details class="card extras" open>
+    <summary><strong>Also on your ballot</strong> <span class="muted">\u2014 check your choices to add them to your printable card</span></summary>
+    <p class="muted" style="font-size:14px;margin:12px 0 4px">These races aren\u2019t matched to your answers. Judges don\u2019t campaign on policy positions, and we haven\u2019t researched the other offices yet. Propositions only appear on the ballots of the city or district named.</p>
+    <ul class="extra-list">${ex}${pr}</ul>
+  </details>`;
+}
+
+function pickedRows() {
+  const rows = [];
+  (S.ballot.contests || []).forEach((ct, i) => {
+    const j = S.picks['c' + i];
+    const c = j !== undefined ? ct.candidates[+j] : null;
+    const { top } = scoreContest({ ...ct, i });
+    rows.push({ office: ct.office, choice: c ? c.name + ' (' + c.party + ')' : '', pct: c ? evaluate(c).pct : null,
+      party: c ? c.party : '', match: c && top ? (top.j === +j ? 'top' : 'alt') : null });
+  });
+  const ABBR = { R: 'Republican', D: 'Democratic', L: 'Libertarian', G: 'Green' };
+  (S.ballot.extras || []).forEach((x, i) => { const v = S.picks['x' + i]; if (v) { const m = v.match(/\(([RDLG])\)\s*$/); rows.push({ office: x.office, choice: v, extra: true, party: m ? ABBR[m[1]] : 'Nonpartisan' }); } });
+  (S.ballot.props || []).forEach((x, i) => { const v = S.picks['p' + i]; if (v) rows.push({ office: x.title, choice: v, extra: true }); });
+  return rows;
+}
+
+const PARTY_ORDER = [['Republican', '#6250d6'], ['Democratic', '#1baf7a'], ['Libertarian', '#eda100'], ['Green', '#008300'], ['Other / nonpartisan', '#e87ba4']];
+function pieSvg(slices, size) {
+  const total = slices.reduce((a, b) => a + b.value, 0);
+  const r = size / 2, cx = r, cy = r;
+  let a0 = -Math.PI / 2, out = '';
+  slices.filter(x => x.value > 0).forEach(x => {
+    const frac = x.value / total, a1 = a0 + frac * 2 * Math.PI;
+    const pctTxt = Math.round(frac * 100) + '%';
+    const tip = `<title>${esc(x.label)}: ${x.value} (${pctTxt})</title>`;
+    if (frac >= 0.9999) out += `<circle cx="${cx}" cy="${cy}" r="${r - 1}" fill="${x.color}" stroke="#fff" stroke-width="2">${tip}</circle>`;
+    else {
+      const large = a1 - a0 > Math.PI ? 1 : 0;
+      const p = (a) => (cx + (r - 1) * Math.cos(a)).toFixed(2) + ' ' + (cy + (r - 1) * Math.sin(a)).toFixed(2);
+      out += `<path d="M${cx} ${cy} L${p(a0)} A${r - 1} ${r - 1} 0 ${large} 1 ${p(a1)} Z" fill="${x.color}" stroke="#fff" stroke-width="2" stroke-linejoin="round">${tip}</path>`;
+    }
+    if (frac >= 0.08) {
+      const am = (a0 + a1) / 2, lr = frac >= 0.9999 ? 0 : r * 0.6;
+      out += `<text x="${(cx + lr * Math.cos(am)).toFixed(1)}" y="${(cy + lr * Math.sin(am)).toFixed(1)}" text-anchor="middle" dominant-baseline="central" class="pie-lbl">${pctTxt}</text>`;
+    }
+    a0 = a1;
+  });
+  return out;
+}
+function pieFigure(title, slices, note) {
+  const total = slices.reduce((a, b) => a + b.value, 0);
+  if (!total) return '';
+  const desc = slices.filter(x => x.value).map(x => `${x.label} ${Math.round(100 * x.value / total)}%`).join(', ');
+  return `<figure class="pie-fig">
+    <figcaption>${esc(title)}</figcaption>
+    <div class="pie-body">
+      <svg class="pie" viewBox="0 0 140 140" width="140" height="140" role="img" aria-label="${esc(title + ': ' + desc)}">${pieSvg(slices, 140)}</svg>
+      <ul class="pie-legend">${slices.filter(x => x.value).map(x => `<li><span class="sw" style="background:${x.color}"></span><span>${esc(x.label)}</span><b>${Math.round(100 * x.value / total)}%</b><span class="muted">(${x.value})</span></li>`).join('')}</ul>
+    </div>
+    ${note ? `<p class="pie-note">${esc(note)}</p>` : ''}
+  </figure>`;
+}
+function chartsHtml() {
+  const rows = pickedRows().filter(r => r.choice && r.party);
+  if (!rows.length) return '';
+  const party = PARTY_ORDER.map(([label, color]) => ({ label, color, value: rows.filter(r => (PARTY_ORDER.slice(0, 4).some(p => p[0] === r.party) ? r.party : 'Other / nonpartisan') === label).length }));
+  const m = rows.filter(r => r.match);
+  const align = [{ label: 'My closest match', color: '#2a78d6', value: m.filter(r => r.match === 'top').length }, { label: 'An alternative', color: '#eb6834', value: m.filter(r => r.match === 'alt').length }];
+  return `<div class="pie-row">
+    ${pieFigure('My picks by party', party, rows.length + ' candidate pick' + (rows.length === 1 ? '' : 's') + '; propositions not included.')}
+    ${pieFigure('Closest match vs. alternative', align, m.length ? m.length + ' matched race' + (m.length === 1 ? '' : 's') + ' with a pick.' : '')}
+  </div>`;
+}
+
+function myBallotHtml() {
+  const rows = pickedRows();
+  const n = rows.filter(r => r.choice).length;
+  return `<section class="card top-red stack" id="my-ballot">
+    <h2 class="h-ic">${icon('ballot', 36)}My ballot card</h2>
+    <p class="muted" style="margin:0">${n ? `You\u2019ve picked ${n} race${n === 1 ? '' : 's'}. Check a box next to any candidate above to add or change a pick.` : 'Check the box next to your closest match, or next to another candidate, in each race above. Your picks show up here.'}</p>
+    ${chartsHtml()}
+    ${n ? `<ul class="card-list">${rows.filter(r => r.choice).map(r => `<li><span class="muted">${esc(r.office)}</span><strong>${esc(r.choice)}</strong></li>`).join('')}</ul>` : ''}
+    <button type="button" class="btn red block" data-act="print" data-k="print" ${n ? '' : 'disabled'}>${icon('doc', 24)}Printable PDF for the voting booth</button>
+    <p class="muted" style="font-size:13px;margin:0">Opens your device\u2019s print screen. Choose a printer, or <strong>Save to Files / Save as PDF</strong>. In Texas you can bring printed notes into the booth, but you can\u2019t use your phone within 100 feet of a voting station.</p>
+  </section>`;
+}
+
+function printCardHtml() {
+  const rows = pickedRows();
+  const el = (S.ballot && S.ballot.election) || {};
+  return `<div class="pc">
+    <div class="pc-head"><div><div class="pc-kicker">Denton County, Texas \u00b7 ${esc(el.name || 'General Election')}</div><h1>My Ballot Card</h1><div class="pc-date">${el.electionDay ? esc(fmtDate(el.electionDay)) : ''}${el.earlyVoting ? ' \u00b7 ' + esc(el.earlyVoting) : ''}</div></div><div class="pc-logo">${icon('ballot', 64)}</div></div>
+    <table class="pc-table"><thead><tr><th>Race</th><th>My choice</th></tr></thead><tbody>
+      ${rows.map(r => `<tr class="${r.choice ? '' : 'pc-empty'}"><td>${esc(r.office)}</td><td><span class="pc-box">${r.choice ? '\u2713' : ''}</span>${r.choice ? esc(r.choice) : '<span class="pc-blank">No pick</span>'}</td></tr>`).join('')}
+    </tbody></table>
+    ${chartsHtml()}
+    <p class="pc-foot">Your notes for the voting booth. Races appear here in Ballot Match order, which may differ from your official ballot. Confirm your sample ballot at votedenton.gov. Made with Ballot Match, a nonpartisan guide; matches reflect only your answers and candidates\u2019 public records.</p>
+  </div>`;
+}
+
 function viewRaces() {
   const cts = contests();
   const el = S.ballot.election || {};
@@ -373,6 +482,14 @@ function viewQuiz(n) {
   </div>`;
 }
 
+function pickBtn(key, value, label, big) {
+  const on = S.picks[key] === value;
+  return `<button type="button" class="pick ${big ? 'pick-big' : ''}" role="checkbox" aria-checked="${on}" aria-label="${esc(label)}" data-act="pick" data-key="${esc(key)}" data-val="${esc(value)}" data-k="pk-${esc(key)}-${esc(value)}"><span class="pbox">${UI.check}</span>${big ? `<span>${on ? 'My pick' : 'Select this candidate'}</span>` : ''}</button>`;
+}
+function parseNames(str) {
+  return String(str).split(/\s*\u00b7\s*/).map(x => x.trim()).filter(x => x && /\(|^[A-Z][a-z]/.test(x) && x.split(' ').length <= 6 && !/:/.test(x));
+}
+
 function raceCard(ct, activeKey) {
   const { scored, top } = scoreContest(ct);
   const ratedCount = scored.filter(x => x.e.pct !== null).length;
@@ -392,9 +509,11 @@ function raceCard(ct, activeKey) {
           <div class="pct" style="margin-top:8px"><b>${top.e.pct}%</b><span>aligned with you</span></div>
         </div>
       </div>
+      ${pickBtn('c' + ct.i, String(top.j), 'Select ' + c.name + ' as my vote for ' + ct.office, true)}
       ${c.bio ? `<p style="margin:0">${esc(c.bio)}</p>` : ''}
       ${ratedCount > 1 ? '' : '<div class="notice warn">The other candidates in this race haven’t taken public positions on the issues you answered, so this score isn’t a head-to-head comparison.</div>'}
       <div class="why"><h3>Why this candidate</h3><p>${esc(why)}</p>${hl.length ? `<ul>${hl.map(h => `<li><strong>${esc(h.topic)}:</strong> ${esc(h.text)}</li>`).join('')}</ul>` : ''}</div>
+      ${top.e.n < 4 ? `<div class="notice warn">Low confidence: this score rests on only ${top.e.n} of your answers, because ${esc(c.name.split(' ')[0])} has few public positions.</div>` : ''}
       <span class="muted" style="font-size:13px">Compared on ${top.e.n} of your answers where ${esc(c.name.split(' ')[0])} has a public position.${top.e.rec && top.e.rec.demo ? ' Demo record.' : ''}</span>
       <a class="btn" href="#/c/${ct.i}/${top.j}" data-k="tp-${ct.i}">Full profile &amp; stances ${UI.next}</a>
     </div>`;
@@ -406,8 +525,8 @@ function raceCard(ct, activeKey) {
   <section class="card race-card">
     <header><h2>${esc(ct.office)}</h2><span>${ct.level}${ct.district ? ' · ' + esc(ct.district) : ''}</span></header>
     ${topHtml}
-    ${rest.length ? `<div class="others"><h3>${top ? 'Other candidates in this race' : 'Candidates'}</h3><ul>
-      ${rest.map(x => `<li class="other cand-row ${activeKey === ct.i + '/' + x.j ? 'active' : ''}"><a href="#/c/${ct.i}/${x.j}" data-k="o-${ct.i}-${x.j}">
+    ${rest.length ? `<div class="others"><h3>${top ? 'Other candidates \u2014 check one to select instead' : 'Candidates \u2014 check one to select'}</h3><ul>
+      ${rest.map(x => `<li class="other cand-row ${activeKey === ct.i + '/' + x.j ? 'active' : ''}">${pickBtn('c' + ct.i, String(x.j), 'Select ' + x.c.name + ' instead for ' + ct.office)}<a href="#/c/${ct.i}/${x.j}" data-k="o-${ct.i}-${x.j}">
         <span class="o-ini">${x.c.photoUrl ? `<img src="${esc(x.c.photoUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : esc(initials(x.c.name))}</span>
         <span class="o-main"><span class="o-name">${esc(x.c.name)}</span><span class="o-party">${esc(x.c.party)}</span></span>
         <span class="o-pct">${x.e.pct === null ? '<span class="muted" style="font-weight:600;font-size:13px">Not rated</span>' : x.e.pct + '%<span class="minibar"><span style="width:' + x.e.pct + '%"></span></span>'}</span>
@@ -494,7 +613,8 @@ function viewResults(sel) {
       <div class="stack">${list.map(ct => raceCard(ct, activeKey)).join('') || '<div class="card">No races selected.</div>'}</div>
       ${wide ? `<aside class="detail-pane" aria-label="Candidate profile">${paneCt ? profileHtml(paneCt, paneJ, true) : '<div class="card pane-empty">Select a candidate to see their profile.</div>'}</aside>` : ''}
     </div>
-    ${extrasHtml(S.ballot)}
+    ${pickExtrasHtml(S.ballot)}
+    ${myBallotHtml()}
     ${S.ballot.links && S.ballot.links.length ? `<div class="stack" style="gap:10px"><h2 style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase" class="muted">Before you vote</h2>${linksHtml(S.ballot.links)}</div>` : ''}
   </div>${footer()}`;
 }
@@ -546,7 +666,7 @@ function viewAbout() {
       <section class="card dark-card"><h2 class="h-ic">${icon('pie', 34)}The match score</h2>
         <p>For each statement you and a candidate both have a position on:</p>
         <div class="formula">agreement = 1 − |you − them| ÷ 4</div>
-        <p>Your alignment is the average agreement, weighted by importance (Low 1, Medium 2, High 3). Skipped questions and topics with no public record are left out. The app shows how many answers each score rests on, and flags ties.</p></section>
+        <p>Your alignment is the average agreement, weighted by importance (Low 1, Medium 2, High 3). Skipped questions and topics with no public record are left out. Scores built on only a few positions are pulled toward 50%, so a thin record can't beat a full one by chance. The app shows how many answers each score rests on, and flags ties.</p></section>
     </div>
     <section class="card top-red"><h2 class="h-ic">${icon('clipboard', 34)}The 24 statements</h2>
       <div class="topics" style="margin-top:8px">${TOPICS.map((t, ti) => `<div class="topic"><h3 style="font-size:16px">${esc(t)}</h3><p>${QUESTIONS.filter(q => q.topic === ti).map(q => esc(q.text)).join('<br>')}</p></div>`).join('')}</div>
@@ -641,7 +761,7 @@ function wireStart() {
   $('#distform').addEventListener('submit', ev => {
     ev.preventDefault();
     DIST_KEYS.forEach(k => { S.dist[k] = $('#d-' + k).value; });
-    S.ballot = buildBallot(); S.sel = S.ballot.contests.map((_, i) => i); S.all = true;
+    S.ballot = buildBallot(); S.sel = S.ballot.contests.map((_, i) => i); S.all = true; S.picks = {};
     save(); go('#/races');
   });
   // iOS install tip
@@ -669,6 +789,13 @@ function act(name, el) {
     }
     case 'mode': S.mode = el.dataset.v; save(); render(); break;
     case 'start-quiz': go('#/quiz/1'); break;
+    case 'pick': { const k = el.dataset.key, v = el.dataset.val; if (S.picks[k] === v) delete S.picks[k]; else S.picks[k] = v; save(); render(); break; }
+    case 'print': {
+      const root = $('#print-root'); root.innerHTML = printCardHtml();
+      const t = document.title; document.title = 'My Denton County Ballot Card';
+      setTimeout(() => { window.print(); document.title = t; }, 50);
+      break;
+    }
     case 'preset': { const p = DENTON.presets[+el.dataset.i]; DIST_KEYS.forEach(k => { S.dist[k] = p[k] || ''; }); save(); render(); break; }
     case 'ans': S.ans[q.id] = +el.dataset.v; save(); render(); break;
     case 'imp': S.imp[q.id] = +el.dataset.v; save(); render(); break;
@@ -679,7 +806,7 @@ function act(name, el) {
     case 'change': go('#/races'); break;
     case 'demo': S.zip = ($('#zip') && /^\d{5}$/.test($('#zip').value)) ? $('#zip').value : ''; save(); lookup(true); break;
     case 'close-about': if (history.length > 1) history.back(); else go('#/start'); break;
-    case 'restart': store.clear(); Object.assign(S, { zip: '', address: '', ballot: null, sel: [], all: true, mode: 'full', ans: {}, imp: {}, error: '', dist: { cd: '', hd: '', pct: '', jp: '' } }); go('#/start'); break;
+    case 'restart': store.clear(); Object.assign(S, { zip: '', address: '', ballot: null, sel: [], all: true, mode: 'full', ans: {}, imp: {}, error: '', dist: { cd: '', hd: '', pct: '', jp: '' }, picks: {} }); go('#/start'); break;
     case 'ios-done': store.set('iosTipDone', true); $('#ios-tip').innerHTML = ''; break;
     default: break;
   }

@@ -257,6 +257,34 @@ tr:nth-child(even) td { background: #FBFAF6; }
 .extra-list li { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-top: 1px solid var(--line-2); font-size: 15px; }
 .extra-list li span { color: var(--muted); }
 
+/* ---------- Picks ---------- */
+.pick { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 44px; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--navy); font-weight: 700; font-size: 16px; touch-action: manipulation; }
+.pick .pbox { flex: none; width: 28px; height: 28px; border-radius: 6px; border: 2px solid #8A8577; background: #fff; display: flex; align-items: center; justify-content: center; color: #fff; }
+.pick .pbox svg { opacity: 0; }
+.pick[aria-checked="true"] .pbox { background: var(--red); border-color: var(--red); }
+.pick[aria-checked="true"] .pbox svg { opacity: 1; }
+.pick-big { align-self: flex-start; min-height: 52px; padding: 0 18px 0 12px; border: 2px solid var(--line); border-radius: 8px; background: #fff; }
+.pick-big[aria-checked="true"] { border-color: var(--red); background: #FBEDEE; color: var(--red-2); }
+.other .pick { margin-right: -4px; }
+.xrow { gap: 6px !important; }
+.xopts { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 2px; }
+.xopt { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; color: var(--ink); font-weight: 600; }
+.card-list { list-style: none; margin: 0; padding: 0; }
+.card-list li { display: flex; flex-direction: column; padding: 10px 0; border-top: 1px solid var(--line-2); }
+.card-list li span { font-size: 13px; }
+#print-root { display: none; }
+.pie-row { display: grid; gap: 16px; }
+.pie-fig { margin: 0; padding: 14px; border: 1px solid var(--line-2); border-radius: 8px; background: #fff; }
+.pie-fig figcaption { font-weight: 800; font-size: 15px; margin-bottom: 10px; }
+.pie-body { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.pie { flex: none; }
+.pie-lbl { font: 700 13px var(--sans); fill: #fff; paint-order: stroke; stroke: rgba(11,31,58,.55); stroke-width: 2.5px; }
+.pie-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.pie-legend li { display: flex; align-items: center; gap: 8px; }
+.pie-legend .sw { flex: none; width: 12px; height: 12px; border-radius: 3px; }
+.pie-note { margin: 10px 0 0; font-size: 12px; color: var(--muted); }
+@media (min-width: 600px) { .pie-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 /* ---------- Footer ---------- */
 .foot { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 8px; }
 .foot span { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
@@ -291,4 +319,32 @@ tr:nth-child(even) td { background: #FBFAF6; }
   .res-layout.split .topics { grid-template-columns: 1fr; }
   .pipeline { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .profile-head { flex-direction: row; align-items: flex-start; justify-content: space-between; }
+}
+
+/* ============ Printable ballot card ============ */
+@media print {
+  @page { margin: 0.5in; }
+  body { background: #fff !important; }
+  body > *:not(#print-root) { display: none !important; }
+  #print-root { display: block !important; color: #000; font-family: var(--sans); }
+  .pc-head { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 14px; }
+  .pc-kicker { font-size: 10pt; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+  .pc h1 { font-family: var(--serif); font-size: 26pt; margin: 4px 0 2px; }
+  .pc-date { font-size: 11pt; }
+  .pc-table { width: 100%; min-width: 0; border-collapse: collapse; font-size: 12pt; }
+  .pc-table th { background: #fff; color: #000; text-align: left; font-size: 9pt; letter-spacing: .1em; text-transform: uppercase; border-bottom: 1.5px solid #000; padding: 6px 8px; }
+  .pc-table td { padding: 9px 8px; border-top: 1px solid #999; background: #fff !important; vertical-align: top; }
+  .pc-table td:first-child { width: 45%; }
+  .pc-table td:last-child { font-weight: 700; }
+  .pc-table tr { break-inside: avoid; }
+  .pc-box { display: inline-block; width: 14pt; height: 14pt; border: 1.5px solid #000; margin-right: 8px; text-align: center; line-height: 13pt; font-size: 11pt; vertical-align: -2pt; }
+  .pc-empty td { color: #555; }
+  .pc-blank { font-weight: 400; font-style: italic; }
+  .pc-foot { margin-top: 16px; font-size: 9pt; color: #333; }
+  #print-root, #print-root * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pc .pie-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; break-inside: avoid; }
+  .pc .pie-fig { border: 1px solid #999; padding: 10px; }
+  .pc .pie-fig figcaption { font-size: 11pt; }
+  .pc .pie-legend { font-size: 10pt; }
+  .pc .muted, .pc .pie-note { color: #333; }
 }
